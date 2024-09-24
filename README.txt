@@ -1,0 +1,1 @@
+Instalar 'app-release.apk' para probar la aplicacion
