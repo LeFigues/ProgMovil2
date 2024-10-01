@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import '../models/player.dart'; // Asegúrate de importar Player
 
 class ScoreList extends StatelessWidget {
-  final List<String> topScores = [
-    'Player1: 10',
-    'Player2: 9',
-    'Player3: 8',
-    'Player4: 7',
-    'Player5: 6'
-  ];
+  final List<Player> players; // Ahora recibe una lista de Player
+
+  ScoreList({required this.players});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: topScores.length,
+      itemCount: players.length,
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(topScores[index]),
+          title: Text('${players[index].name}: ${players[index].score}'),
         );
       },
     );

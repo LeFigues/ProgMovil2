@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/score_list.dart';
 import 'game_screen.dart';
+import '../services/score_service.dart';
+import '../models/player.dart'; // Asegúrate de importar Player aquí
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -9,6 +11,23 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   final TextEditingController _nameController = TextEditingController();
+  final ScoreService _scoreService = ScoreService();
+  List<Player> topScores = []; // Cambiar a List<Player> en vez de List<String>
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScores();
+  }
+
+  // Cargar los puntajes almacenados
+  void _loadScores() async {
+    List<Player> scores = await _scoreService
+        .getTopPlayers(); // getTopPlayers devuelve List<Player>
+    setState(() {
+      topScores = scores;
+    });
+  }
 
   void _startGame() {
     String playerName = _nameController.text;
@@ -49,7 +68,9 @@ class _MenuScreenState extends State<MenuScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Expanded(
-                child: ScoreList()), // Usamos el widget de la lista de puntajes
+              child: ScoreList(
+                  players: topScores), // Ahora se pasa una lista de Player
+            ),
           ],
         ),
       ),
