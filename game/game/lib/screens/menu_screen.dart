@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/score_list.dart';
-import 'game_screen.dart';
-import '../services/score_service.dart';
-import '../models/player.dart'; // Asegúrate de importar Player aquí
+import 'game_screen.dart'; // Asegúrate de que este archivo esté correctamente referenciado
 
 class MenuScreen extends StatefulWidget {
   @override
@@ -10,67 +7,69 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  final ScoreService _scoreService = ScoreService();
-  List<Player> topScores = []; // Cambiar a List<Player> en vez de List<String>
+  String playerName = "";
+  List<Map<String, dynamic>> scores =
+      []; // Lista para guardar los puntajes de los jugadores
 
-  @override
-  void initState() {
-    super.initState();
-    _loadScores();
-  }
-
-  // Cargar los puntajes almacenados
-  void _loadScores() async {
-    List<Player> scores = await _scoreService
-        .getTopPlayers(); // getTopPlayers devuelve List<Player>
+  // Función para reiniciar el juego y volver al menú
+  void _restartGame(String name, int score) {
     setState(() {
-      topScores = scores;
+      scores.add(
+          {'player': name, 'score': score}); // Agregar el puntaje a la lista
+      playerName =
+          ""; // Reinicia el nombre del jugador o ajusta según lo que necesites
     });
-  }
-
-  void _startGame() {
-    String playerName = _nameController.text;
-    if (playerName.isNotEmpty) {
-      // Navegar a la pantalla del juego con el nombre del jugador
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => GameScreen(playerName: playerName)),
-      );
-    }
+    Navigator.pop(context); // Volver al menú
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Memory Game'),
+        title: Text('Menú Principal'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Enter your name:'),
             TextField(
-              controller: _nameController,
-              decoration: InputDecoration(hintText: 'Name'),
+              decoration: InputDecoration(labelText: "Nombre del Jugador"),
+              onChanged: (value) {
+                playerName = value; // Guarda el nombre del jugador
+              },
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _startGame,
-              child: Text('Play'),
+              onPressed: () {
+                if (playerName.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GameScreen(
+                        playerName: playerName,
+                        onRestart: (name, score) => _restartGame(
+                            name, score), // Pasa la función al juego
+                      ),
+                    ),
+                  );
+                } else {
+                  // Muestra un mensaje si el nombre está vacío
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Por favor ingresa un nombre')),
+                  );
+                }
+              },
+              child: Text("Iniciar Juego"),
             ),
-            SizedBox(height: 40),
-            Text(
-              'Top 5 Scores',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ScoreList(
-                  players: topScores), // Ahora se pasa una lista de Player
-            ),
+            SizedBox(height: 20),
+            if (scores.isNotEmpty)
+              Column(
+                children: [
+                  Text("Puntajes de Jugadores:"),
+                  for (var score in scores)
+                    Text("${score['player']}: ${score['score']} puntos"),
+                ],
+              ),
           ],
         ),
       ),
