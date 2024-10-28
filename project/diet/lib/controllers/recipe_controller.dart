@@ -51,7 +51,7 @@ class RecipeController {
     final snapshot = await firestore
         .collection('recipes')
         .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThanOrEqualTo: query + '\uf8ff')
+        .where('name', isLessThanOrEqualTo: '$query\uf8ff')
         .get();
 
     return snapshot.docs

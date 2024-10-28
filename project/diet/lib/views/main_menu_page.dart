@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 
 class MainMenuPage extends StatelessWidget {
+  const MainMenuPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Menú Principal')),
+      appBar: AppBar(title: const Text('Menú Principal')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/registerRecipe'),
-              child: Text('Registrar Receta'),
+              child: const Text('Registrar Receta'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/searchRecipes'),
-              child: Text('Buscar Recetas'),
+              child: const Text('Buscar Recetas'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/savedRecipes'),
-              child: Text('Recetas Guardadas'),
+              child: const Text('Recetas Guardadas'),
             ),
             ElevatedButton(
               onPressed: () =>
                   Navigator.pushNamed(context, '/userRecipes'), // Nuevo botón
-              child: Text('Mis Recetas'),
+              child: const Text('Mis Recetas'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/userProfile'),
-              child: Text('Perfil'),
+              child: const Text('Perfil'),
             ),
           ],
         ),

@@ -6,6 +6,8 @@ import '../models/recipe.dart';
 import '../models/ingredient.dart';
 
 class RegisterRecipePage extends StatefulWidget {
+  const RegisterRecipePage({super.key});
+
   @override
   _RegisterRecipePageState createState() => _RegisterRecipePageState();
 }
@@ -84,7 +86,7 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor completa todos los campos.')),
+        const SnackBar(content: Text('Por favor completa todos los campos.')),
       );
     }
   }
@@ -92,7 +94,7 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Registrar Receta')),
+      appBar: AppBar(title: const Text('Registrar Receta')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -100,11 +102,12 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: 'Nombre de la receta'),
+                decoration:
+                    const InputDecoration(labelText: 'Nombre de la receta'),
               ),
               TextField(
                 controller: descriptionController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     labelText: 'Descripción / Instrucciones de preparación'),
                 maxLines: 3,
               ),
@@ -116,42 +119,44 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
                     .toList(),
                 onChanged: (value) =>
                     setState(() => selectedRecipeType = value),
-                decoration: InputDecoration(labelText: 'Tipo de receta'),
+                decoration: const InputDecoration(labelText: 'Tipo de receta'),
               ),
               TextField(
                 controller: caloriesController,
-                decoration: InputDecoration(labelText: 'Calorías por gramo'),
+                decoration:
+                    const InputDecoration(labelText: 'Calorías por gramo'),
                 keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: selectAndUploadImage,
-                child: Text('Subir Imagen de la Receta'),
+                child: const Text('Subir Imagen de la Receta'),
               ),
               if (imageUrl != null) Image.network(imageUrl!, height: 100),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: ingredientNameController,
                 decoration:
-                    InputDecoration(labelText: 'Nombre del ingrediente'),
+                    const InputDecoration(labelText: 'Nombre del ingrediente'),
               ),
               TextField(
                 controller: quantityController,
-                decoration: InputDecoration(labelText: 'Cantidad'),
+                decoration: const InputDecoration(labelText: 'Cantidad'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
                 controller: unitController,
-                decoration: InputDecoration(labelText: 'Unidad de medida'),
+                decoration:
+                    const InputDecoration(labelText: 'Unidad de medida'),
               ),
               ElevatedButton(
                 onPressed: addIngredient,
-                child: Text('Añadir Ingrediente'),
+                child: const Text('Añadir Ingrediente'),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: registerRecipe,
-                child: Text('Registrar Receta'),
+                child: const Text('Registrar Receta'),
               ),
             ],
           ),

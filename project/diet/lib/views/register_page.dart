@@ -7,6 +7,8 @@ class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  RegisterPage({super.key});
+
   void register(BuildContext context) async {
     final username = usernameController.text.trim();
     final email = emailController.text.trim();
@@ -14,16 +16,16 @@ class RegisterPage extends StatelessWidget {
 
     // Validaciones de campos
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Por favor, completa todos los campos.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Por favor, completa todos los campos.")));
       return;
     }
 
     // Validación del formato de email
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!emailRegex.hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Ingresa un correo electrónico válido.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Ingresa un correo electrónico válido.")));
       return;
     }
 
@@ -39,29 +41,30 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Registrarse')),
+      appBar: AppBar(title: const Text('Registrarse')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: usernameController,
-              decoration: InputDecoration(labelText: 'Nombre de usuario'),
+              decoration: const InputDecoration(labelText: 'Nombre de usuario'),
             ),
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              decoration:
+                  const InputDecoration(labelText: 'Correo electrónico'),
               keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => register(context),
-              child: Text('Registrarse'),
+              child: const Text('Registrarse'),
             ),
           ],
         ),

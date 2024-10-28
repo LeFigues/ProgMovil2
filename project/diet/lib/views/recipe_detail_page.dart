@@ -4,7 +4,7 @@ import '../models/recipe.dart';
 class RecipeDetailPage extends StatelessWidget {
   final Recipe recipe;
 
-  RecipeDetailPage({required this.recipe});
+  const RecipeDetailPage({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -25,26 +25,26 @@ class RecipeDetailPage extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Autor: ${recipe.authorId}', // Muestra el autor
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               'Tipo de Receta: ${recipe.recipeType}', // Muestra el tipo de receta
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Descripción:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               recipe.description,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Ingredientes:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -53,21 +53,21 @@ class RecipeDetailPage extends StatelessWidget {
               children: recipe.ingredients.map((ingredient) {
                 return Text(
                   '${ingredient.quantity} ${ingredient.unit} de ${ingredient.name}',
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 );
               }).toList(),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Calorías por gramo: ${recipe.caloriesPerGram}',
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Implementa la función para guardar la receta aquí, si es necesario
               },
-              child: Text('Guardar Receta'),
+              child: const Text('Guardar Receta'),
             ),
           ],
         ),

@@ -6,6 +6,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  LoginPage({super.key});
+
   void login(BuildContext context) async {
     final email = emailController.text;
     final password = passwordController.text;
@@ -25,7 +27,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Iniciar Sesión')),
+      appBar: AppBar(title: const Text('Iniciar Sesión')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -33,22 +35,23 @@ class LoginPage extends StatelessWidget {
           children: [
             TextField(
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Correo electrónico'),
+              decoration:
+                  const InputDecoration(labelText: 'Correo electrónico'),
             ),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(labelText: 'Contraseña'),
+              decoration: const InputDecoration(labelText: 'Contraseña'),
               obscureText: true,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => login(context),
-              child: Text('Iniciar Sesión'),
+              child: const Text('Iniciar Sesión'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextButton(
               onPressed: () => navigateToRegister(context),
-              child: Text('¿No tienes una cuenta? Regístrate'),
+              child: const Text('¿No tienes una cuenta? Regístrate'),
             ),
           ],
         ),

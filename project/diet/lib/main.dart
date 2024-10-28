@@ -14,7 +14,7 @@ import 'views/user_recipes_page.dart'; // Importa la nueva página
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptions(
+    options: const FirebaseOptions(
       apiKey: "AIzaSyBee20qfCWcuBnSc6hkeQ5Xha7dpiBLYNc",
       authDomain: "diet-e19e3.firebaseapp.com",
       projectId: "diet-e19e3",
@@ -29,6 +29,8 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final UserController userController = UserController();
+
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import '../models/user.dart';
 class UserPage extends StatefulWidget {
   final String userId;
 
-  UserPage({required this.userId});
+  const UserPage({super.key, required this.userId});
 
   @override
   _UserPageState createState() => _UserPageState();
@@ -34,15 +34,16 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Perfil de Usuario')),
+      appBar: AppBar(title: const Text('Perfil de Usuario')),
       body: user == null
-          ? CircularProgressIndicator()
+          ? const CircularProgressIndicator()
           : Column(
               children: [
                 Text('Nombre: ${user.username}'),
                 Text('Correo: ${user.email}'),
                 ElevatedButton(
-                    onPressed: deleteUser, child: Text('Eliminar cuenta')),
+                    onPressed: deleteUser,
+                    child: const Text('Eliminar cuenta')),
               ],
             ),
     );

@@ -4,6 +4,8 @@ import '../models/recipe.dart';
 import 'recipe_detail_page.dart';
 
 class SearchRecipesPage extends StatefulWidget {
+  const SearchRecipesPage({super.key});
+
   @override
   _SearchRecipesPageState createState() => _SearchRecipesPageState();
 }
@@ -40,7 +42,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Buscar Recetas')),
+      appBar: AppBar(title: const Text('Buscar Recetas')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -50,7 +52,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
               onChanged: searchRecipes,
               decoration: InputDecoration(
                 labelText: 'Buscar receta',
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -63,7 +65,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                   final recipe = recipes[index];
                   return Card(
                     elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -80,7 +82,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           // Datos de la receta
                           Expanded(
                             child: Column(
@@ -88,7 +90,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                               children: [
                                 Text(
                                   recipe.name,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -110,7 +112,7 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Más info',
                               style: TextStyle(color: Colors.blue),
                             ),

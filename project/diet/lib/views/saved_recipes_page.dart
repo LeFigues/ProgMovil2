@@ -6,7 +6,7 @@ import 'recipe_detail_page.dart';
 class SavedRecipesPage extends StatefulWidget {
   final String userId;
 
-  SavedRecipesPage({required this.userId});
+  const SavedRecipesPage({super.key, required this.userId});
 
   @override
   _SavedRecipesPageState createState() => _SavedRecipesPageState();
@@ -32,18 +32,18 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Recetas Guardadas')),
+      appBar: AppBar(title: const Text('Recetas Guardadas')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: savedRecipes.isEmpty
-            ? Center(child: Text('No tienes recetas guardadas.'))
+            ? const Center(child: Text('No tienes recetas guardadas.'))
             : ListView.builder(
                 itemCount: savedRecipes.length,
                 itemBuilder: (context, index) {
                   final recipe = savedRecipes[index];
                   return Card(
                     elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -60,7 +60,7 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           // Datos de la receta
                           Expanded(
                             child: Column(
@@ -68,7 +68,7 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
                               children: [
                                 Text(
                                   recipe.name,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -90,7 +90,7 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Más info',
                               style: TextStyle(color: Colors.blue),
                             ),

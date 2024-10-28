@@ -5,7 +5,7 @@ import '../models/recipe.dart';
 class UserRecipesPage extends StatefulWidget {
   final String userId;
 
-  UserRecipesPage({required this.userId});
+  const UserRecipesPage({super.key, required this.userId});
 
   @override
   _UserRecipesPageState createState() => _UserRecipesPageState();
@@ -31,7 +31,7 @@ class _UserRecipesPageState extends State<UserRecipesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mis Recetas')),
+      appBar: AppBar(title: const Text('Mis Recetas')),
       body: ListView.builder(
         itemCount: userRecipes.length,
         itemBuilder: (context, index) {
