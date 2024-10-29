@@ -4,16 +4,18 @@ class Recipe {
   final String id;
   final String name;
   final String authorId;
+  final String? authorUsername; // Campo opcional para el username del autor
   final String description;
   final List<Ingredient> ingredients;
-  final String imageUrl; // URL de la imagen en Storage
-  final String recipeType; // Tipo de receta (ej: Vegano, Vegetariano)
-  final double caloriesPerGram; // Calorías por gramo
+  final String imageUrl;
+  final String recipeType;
+  final double caloriesPerGram;
 
   Recipe({
     required this.id,
     required this.name,
     required this.authorId,
+    this.authorUsername,
     required this.description,
     required this.ingredients,
     required this.imageUrl,
@@ -28,13 +30,14 @@ class Recipe {
       'description': description,
       'ingredients':
           ingredients.map((ingredient) => ingredient.toMap()).toList(),
-      'imageUrl': imageUrl, // Almacena la URL de la imagen
-      'recipeType': recipeType, // Almacena el tipo de receta
-      'caloriesPerGram': caloriesPerGram, // Almacena las calorías por gramo
+      'imageUrl': imageUrl,
+      'recipeType': recipeType,
+      'caloriesPerGram': caloriesPerGram,
     };
   }
 
-  factory Recipe.fromMap(String id, Map<String, dynamic> data) {
+  factory Recipe.fromMap(String id, Map<String, dynamic> data,
+      {String? username}) {
     List<dynamic> ingredientMaps = data['ingredients'] ?? [];
     List<Ingredient> ingredients =
         ingredientMaps.map((map) => Ingredient.fromMap(map)).toList();
@@ -43,12 +46,12 @@ class Recipe {
       id: id,
       name: data['name'],
       authorId: data['authorId'],
+      authorUsername: username, // Asigna el username si se proporciona
       description: data['description'],
       ingredients: ingredients,
-      imageUrl: data['imageUrl'], // Extrae la URL de la imagen
-      recipeType: data['recipeType'], // Extrae el tipo de receta
-      caloriesPerGram:
-          data['caloriesPerGram'].toDouble(), // Extrae las calorías por gramo
+      imageUrl: data['imageUrl'],
+      recipeType: data['recipeType'],
+      caloriesPerGram: data['caloriesPerGram'].toDouble(),
     );
   }
 }

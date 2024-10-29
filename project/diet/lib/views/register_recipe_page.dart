@@ -1,32 +1,31 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/recipe_controller.dart';
-import '../controllers/user_controller.dart';
-import '../controllers/storage_controller.dart'; // Importa el controlador de Storage
+import '../controllers/storage_controller.dart';
 import '../models/recipe.dart';
 import '../models/ingredient.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterRecipePage extends StatefulWidget {
-  const RegisterRecipePage({super.key});
-
   @override
   _RegisterRecipePageState createState() => _RegisterRecipePageState();
 }
 
 class _RegisterRecipePageState extends State<RegisterRecipePage> {
   final RecipeController recipeController = RecipeController();
-  final UserController userController = UserController();
-  final StorageController storageController =
-      StorageController(); // Instancia del controlador de Storage
+  final StorageController storageController = StorageController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController caloriesController = TextEditingController();
-  final List<Ingredient> ingredients = [];
   final TextEditingController ingredientNameController =
       TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController unitController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
 
-  String? selectedRecipeType;
+  List<Ingredient> ingredients = [];
+  File? _imageFile;
   String? imageUrl;
 
   void addIngredient() {
@@ -34,47 +33,47 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
     final quantity = double.tryParse(quantityController.text) ?? 0.0;
     final unit = unitController.text;
 
-    if (name.isNotEmpty && unit.isNotEmpty && quantity > 0) {
-      final ingredient = Ingredient(name: name, quantity: quantity, unit: unit);
+    if (name.isNotEmpty && quantity > 0 && unit.isNotEmpty) {
       setState(() {
-        ingredients.add(ingredient);
-      });
-      ingredientNameController.clear();
-      quantityController.clear();
-      unitController.clear();
-    }
-  }
-
-  Future<void> selectAndUploadImage() async {
-    final url = await storageController.uploadImage('recipe_images');
-    if (url != null) {
-      setState(() {
-        imageUrl = url;
+        ingredients.add(Ingredient(name: name, quantity: quantity, unit: unit));
+        ingredientNameController.clear();
+        quantityController.clear();
+        unitController.clear();
       });
     }
   }
 
-  void registerRecipe() async {
+  Future<void> pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<void> registerRecipe() async {
     final name = nameController.text;
     final description = descriptionController.text;
     final caloriesPerGram = double.tryParse(caloriesController.text) ?? 0.0;
-    final authorId = userController.currentUser?.uid;
+    final authorId = FirebaseAuth.instance.currentUser?.uid;
 
     if (authorId != null &&
         name.isNotEmpty &&
         description.isNotEmpty &&
-        selectedRecipeType != null &&
-        caloriesPerGram > 0 &&
-        ingredients.isNotEmpty &&
-        imageUrl != null) {
+        ingredients.isNotEmpty) {
+      if (_imageFile != null) {
+        imageUrl = await storageController.uploadImage(_imageFile!, 'recetas');
+      }
+
       final recipe = Recipe(
         id: '',
         name: name,
         authorId: authorId,
         description: description,
         ingredients: ingredients,
-        imageUrl: imageUrl!,
-        recipeType: selectedRecipeType!,
+        imageUrl: imageUrl ?? '',
+        recipeType: 'Tipo de Receta',
         caloriesPerGram: caloriesPerGram,
       );
 
@@ -83,10 +82,13 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
         await recipeController.addIngredientIfNotExists(ingredient);
       }
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Receta registrada con éxito')),
+      );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor completa todos los campos.')),
+        SnackBar(content: Text('Por favor completa todos los campos')),
       );
     }
   }
@@ -94,69 +96,71 @@ class _RegisterRecipePageState extends State<RegisterRecipePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrar Receta')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
+      appBar: AppBar(title: Text('Registrar Receta')),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               TextField(
                 controller: nameController,
-                decoration:
-                    const InputDecoration(labelText: 'Nombre de la receta'),
+                decoration: InputDecoration(labelText: 'Nombre de la receta'),
               ),
+              SizedBox(height: 10),
+              _imageFile != null
+                  ? Image.file(_imageFile!, height: 150, fit: BoxFit.cover)
+                  : TextButton(
+                      onPressed: pickImage,
+                      child: Text('Seleccionar Imagen'),
+                    ),
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(
-                    labelText: 'Descripción / Instrucciones de preparación'),
+                decoration:
+                    InputDecoration(labelText: 'Descripción de la receta'),
                 maxLines: 3,
-              ),
-              DropdownButtonFormField<String>(
-                value: selectedRecipeType,
-                items: ['Vegano', 'Vegetariano', 'Sin gluten', 'Otro']
-                    .map((type) =>
-                        DropdownMenuItem(value: type, child: Text(type)))
-                    .toList(),
-                onChanged: (value) =>
-                    setState(() => selectedRecipeType = value),
-                decoration: const InputDecoration(labelText: 'Tipo de receta'),
               ),
               TextField(
                 controller: caloriesController,
-                decoration:
-                    const InputDecoration(labelText: 'Calorías por gramo'),
+                decoration: InputDecoration(labelText: 'Calorías por gramo'),
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: selectAndUploadImage,
-                child: const Text('Subir Imagen de la Receta'),
-              ),
-              if (imageUrl != null) Image.network(imageUrl!, height: 100),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               TextField(
                 controller: ingredientNameController,
                 decoration:
-                    const InputDecoration(labelText: 'Nombre del ingrediente'),
+                    InputDecoration(labelText: 'Nombre del ingrediente'),
               ),
               TextField(
                 controller: quantityController,
-                decoration: const InputDecoration(labelText: 'Cantidad'),
+                decoration: InputDecoration(labelText: 'Cantidad'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
                 controller: unitController,
-                decoration:
-                    const InputDecoration(labelText: 'Unidad de medida'),
+                decoration: InputDecoration(labelText: 'Unidad de medida'),
               ),
               ElevatedButton(
                 onPressed: addIngredient,
-                child: const Text('Añadir Ingrediente'),
+                child: Text('Añadir Ingrediente'),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 20),
+              // Muestra la lista de ingredientes
+              SizedBox(
+                height: 150,
+                child: ListView.builder(
+                  itemCount: ingredients.length,
+                  itemBuilder: (context, index) {
+                    final ingredient = ingredients[index];
+                    return ListTile(
+                      title: Text(
+                          '${ingredient.quantity} ${ingredient.unit} de ${ingredient.name}'),
+                    );
+                  },
+                ),
+              ),
               ElevatedButton(
                 onPressed: registerRecipe,
-                child: const Text('Registrar Receta'),
+                child: Text('Registrar Receta'),
               ),
             ],
           ),

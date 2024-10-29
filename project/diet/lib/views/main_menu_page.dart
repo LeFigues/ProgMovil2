@@ -7,32 +7,57 @@ class MainMenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Menú Principal')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.count(
+          crossAxisCount: 2, // Número de columnas
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
           children: [
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/registerRecipe'),
-              child: const Text('Registrar Receta'),
+            _buildMenuButton(
+              context,
+              label: 'Registrar Receta',
+              route: '/registerRecipe',
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/searchRecipes'),
-              child: const Text('Buscar Recetas'),
+            _buildMenuButton(
+              context,
+              label: 'Buscar Recetas',
+              route: '/searchRecipes',
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/savedRecipes'),
-              child: const Text('Recetas Guardadas'),
+            _buildMenuButton(
+              context,
+              label: 'Recetas Guardadas',
+              route: '/savedRecipes',
             ),
-            ElevatedButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, '/userRecipes'), // Nuevo botón
-              child: const Text('Mis Recetas'),
+            _buildMenuButton(
+              context,
+              label: 'Mis Recetas',
+              route: '/userRecipes',
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.pushNamed(context, '/userProfile'),
-              child: const Text('Perfil'),
+            _buildMenuButton(
+              context,
+              label: 'Perfil',
+              route: '/userProfile',
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton(BuildContext context,
+      {required String label, required String route}) {
+    return ElevatedButton(
+      onPressed: () => Navigator.pushNamed(context, route),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(16.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 16),
         ),
       ),
     );

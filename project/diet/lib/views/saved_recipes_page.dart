@@ -24,8 +24,29 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
 
   Future<void> loadSavedRecipes() async {
     final recipes = await recipeController.getSavedRecipes(widget.userId);
+    List<Recipe> updatedRecipes = [];
+
+    for (var recipe in recipes) {
+      // Obtén el username del autor usando el ID
+      String? username =
+          await recipeController.getUsernameById(recipe.authorId);
+      updatedRecipes.add(
+        Recipe(
+          id: recipe.id,
+          name: recipe.name,
+          authorId: recipe.authorId,
+          authorUsername: username, // Asigna el username en lugar del ID
+          description: recipe.description,
+          ingredients: recipe.ingredients,
+          imageUrl: recipe.imageUrl,
+          recipeType: recipe.recipeType,
+          caloriesPerGram: recipe.caloriesPerGram,
+        ),
+      );
+    }
+
     setState(() {
-      savedRecipes = recipes;
+      savedRecipes = updatedRecipes;
     });
   }
 
@@ -44,14 +65,10 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
                   return Card(
                     elevation: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Imagen de la receta
-                          if (recipe.imageUrl.isNotEmpty)
-                            ClipRRect(
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(8.0),
+                      leading: recipe.imageUrl.isNotEmpty
+                          ? ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
                                 recipe.imageUrl,
@@ -59,43 +76,41 @@ class _SavedRecipesPageState extends State<SavedRecipesPage> {
                                 width: 60,
                                 fit: BoxFit.cover,
                               ),
+                            )
+                          : const Icon(
+                              Icons.fastfood,
+                              size: 60,
+                              color: Colors.grey,
                             ),
-                          const SizedBox(width: 10),
-                          // Datos de la receta
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  recipe.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text('Autor: ${recipe.authorId}'),
-                                Text(
-                                    'Calorías: ${recipe.caloriesPerGram} kcal/g'),
-                              ],
-                            ),
-                          ),
-                          // Botón "Más info"
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      RecipeDetailPage(recipe: recipe),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'Más info',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ),
+                      title: Text(
+                        recipe.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              'Autor: ${recipe.authorUsername ?? recipe.authorId}'),
+                          Text('Calorías: ${recipe.caloriesPerGram} kcal/g'),
                         ],
+                      ),
+                      trailing: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RecipeDetailPage(recipe: recipe),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Más info',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ),
                   );

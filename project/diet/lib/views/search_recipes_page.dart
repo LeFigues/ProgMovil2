@@ -23,8 +23,29 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
 
   Future<void> loadAllRecipes() async {
     final results = await recipeController.getRecipes();
+    List<Recipe> updatedRecipes = [];
+
+    for (var recipe in results) {
+      // Obtén el username del autor usando el ID
+      String? username =
+          await recipeController.getUsernameById(recipe.authorId);
+      updatedRecipes.add(
+        Recipe(
+          id: recipe.id,
+          name: recipe.name,
+          authorId: recipe.authorId,
+          authorUsername: username, // Asigna el username en lugar del ID
+          description: recipe.description,
+          ingredients: recipe.ingredients,
+          imageUrl: recipe.imageUrl,
+          recipeType: recipe.recipeType,
+          caloriesPerGram: recipe.caloriesPerGram,
+        ),
+      );
+    }
+
     setState(() {
-      recipes = results;
+      recipes = updatedRecipes;
     });
   }
 
@@ -95,7 +116,8 @@ class _SearchRecipesPageState extends State<SearchRecipesPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text('Autor: ${recipe.authorId}'),
+                                Text(
+                                    'Autor: ${recipe.authorUsername ?? recipe.authorId}'), // Muestra username o authorId
                                 Text(
                                     'Calorías: ${recipe.caloriesPerGram} kcal/g'),
                               ],

@@ -1,73 +1,126 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../controllers/recipe_controller.dart';
 import '../models/recipe.dart';
 
-class RecipeDetailPage extends StatelessWidget {
+class RecipeDetailPage extends StatefulWidget {
   final Recipe recipe;
 
-  const RecipeDetailPage({super.key, required this.recipe});
+  RecipeDetailPage({required this.recipe});
+
+  @override
+  _RecipeDetailPageState createState() => _RecipeDetailPageState();
+}
+
+class _RecipeDetailPageState extends State<RecipeDetailPage> {
+  final RecipeController recipeController = RecipeController();
+  bool isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfRecipeIsSaved();
+  }
+
+  void checkIfRecipeIsSaved() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      bool saved =
+          await recipeController.isRecipeSaved(userId, widget.recipe.id);
+      setState(() {
+        isSaved = saved;
+      });
+    }
+  }
+
+  void toggleSaveRecipe() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null) {
+      if (isSaved) {
+        await recipeController.removeSavedRecipe(userId, widget.recipe.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Receta quitada de los guardados')),
+        );
+      } else {
+        await recipeController.saveRecipeForUser(userId, widget.recipe);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Receta guardada con éxito')),
+        );
+      }
+
+      setState(() {
+        isSaved = !isSaved;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: No se pudo obtener el ID del usuario')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(recipe.name)),
+      appBar: AppBar(title: Text(widget.recipe.name)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (recipe
-                .imageUrl.isNotEmpty) // Verifica que haya una URL de imagen
+            if (widget.recipe.imageUrl.isNotEmpty)
               Center(
                 child: Image.network(
-                  recipe.imageUrl,
+                  widget.recipe.imageUrl,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Text(
-              'Autor: ${recipe.authorId}', // Muestra el autor
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              'Autor: ${widget.recipe.authorUsername ?? widget.recipe.authorId}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Tipo de Receta: ${recipe.recipeType}', // Muestra el tipo de receta
-              style: const TextStyle(fontSize: 16),
+              'Tipo de Receta: ${widget.recipe.recipeType}',
+              style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'Descripción:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              recipe.description,
-              style: const TextStyle(fontSize: 16),
+              widget.recipe.description,
+              style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'Ingredientes:',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: recipe.ingredients.map((ingredient) {
+              children: widget.recipe.ingredients.map((ingredient) {
                 return Text(
                   '${ingredient.quantity} ${ingredient.unit} de ${ingredient.name}',
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Text(
-              'Calorías por gramo: ${recipe.caloriesPerGram}',
-              style: const TextStyle(fontSize: 16),
+              'Calorías por gramo: ${widget.recipe.caloriesPerGram}',
+              style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Implementa la función para guardar la receta aquí, si es necesario
-              },
-              child: const Text('Guardar Receta'),
+              onPressed: toggleSaveRecipe,
+              child: Text(isSaved ? 'Quitar de Guardados' : 'Guardar Receta'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isSaved ? Colors.red : Colors.blue,
+              ),
             ),
           ],
         ),
